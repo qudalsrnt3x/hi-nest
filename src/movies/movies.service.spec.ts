@@ -53,4 +53,71 @@ describe('MoviesService', () => {
       }
     });
   });
+
+  describe('deleteOne', () => {
+    it('deletes a movie', () => {
+      service.create({
+        title: 'Test movie',
+        director: 'Test director',
+        genres: ['test'],
+        year: 2000,
+      });
+
+      //   console.log(service.getAll());
+      const beforeDelete = service.getAll().length;
+      service.deleteOne(1);
+      const afterDelete = service.getAll().length;
+
+      expect(afterDelete).toBeLessThan(beforeDelete);
+    });
+
+    it('should throw a NotFoundException', () => {
+      try {
+        service.deleteOne(999);
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+      }
+    });
+  });
+
+  describe('create', () => {
+    it('should create a movie', () => {
+      const beforeCreate = service.getAll().length;
+      const createdMovieId = service.create({
+        title: 'Test movie',
+        director: 'Test director',
+        year: 2000,
+        genres: ['Test'],
+      });
+      const afterCreate = service.getAll().length;
+
+      expect(createdMovieId).toEqual(1);
+      console.log(beforeCreate, afterCreate);
+      expect(afterCreate).toBeGreaterThan(beforeCreate);
+    });
+  });
+
+  describe('update', () => {
+    it('should update a movie', () => {
+      service.create({
+        title: 'Test movie',
+        director: 'Test director',
+        year: 2000,
+        genres: ['Test'],
+      });
+
+      service.update(1, { title: 'update Test' });
+      const findMovie = service.getOne(1);
+
+      expect(findMovie.title).toEqual('update Test');
+    });
+
+    it('should throw a NotFoundException', () => {
+      try {
+        service.deleteOne(999);
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+      }
+    });
+  });
 });
