@@ -34,16 +34,29 @@ describe('AppController (e2e)', () => {
       return request(app.getHttpServer()).get('/movies').expect(200).expect([]);
     });
 
-    it('POST', () => {
+    it('POST 201', () => {
       return request(app.getHttpServer())
         .post('/movies')
-        .expect(HttpStatus.CREATED)
         .send({
           title: 'Test',
           director: 'Test director',
           year: 2023,
           genres: ['test'],
-        });
+        })
+        .expect(HttpStatus.CREATED);
+    });
+
+    it('POST 400', () => {
+      return request(app.getHttpServer())
+        .post('/movies')
+        .send({
+          title: 'Test',
+          director: 'Test director',
+          year: 2023,
+          genres: ['test'],
+          other: 'thing',
+        })
+        .expect(HttpStatus.BAD_REQUEST);
     });
 
     it('DELETE', () => {
@@ -64,7 +77,19 @@ describe('AppController (e2e)', () => {
         .get('/movies/999')
         .expect(HttpStatus.NOT_FOUND);
     });
-    it.todo('DELETE');
-    it.todo('PATCH');
+    it('PATCH', () => {
+      return request(app.getHttpServer())
+        .patch('/movies/1')
+        .send({
+          title: 'update test',
+          year: 2012,
+        })
+        .expect(HttpStatus.OK);
+    });
+    it('DELETE', () => {
+      return request(app.getHttpServer())
+        .delete('/movies/1')
+        .expect(HttpStatus.OK);
+    });
   });
 });
